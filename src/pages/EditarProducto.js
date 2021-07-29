@@ -1,6 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { editarProductoAction } from '../actions/productoActions'
 
 const EditarProducto = () => {
+	const history = useHistory()
+	// state para producto
+	const [producto, setProducto] = useState({ nombre: '', precio: 0 })
+
+	const dispatch = useDispatch()
+
+	const { productoEditar } = useSelector((state) => state.productos)
+
+	useEffect(() => {
+		setProducto(productoEditar)
+	}, [productoEditar])
+
+	const onChangeForm = ({ target }) => {
+		setProducto({ ...producto, [target.name]: target.value })
+	}
+
+	const handleSubmit = (e) => {
+		e.preventDefault()
+
+		dispatch(editarProductoAction(producto))
+		history.push('/')
+	}
+
 	return (
 		<div className='row justify-content-center'>
 			<div className='col-md-8'>
@@ -10,7 +36,7 @@ const EditarProducto = () => {
 							Editar Producto
 						</h2>
 
-						<form>
+						<form onSubmit={handleSubmit}>
 							<div className='form-group'>
 								<label>Nombre Producto</label>
 								<input
@@ -18,6 +44,8 @@ const EditarProducto = () => {
 									className='form-control'
 									name='nombre'
 									placeholder='Nombre Producto'
+									value={producto.nombre}
+									onChange={onChangeForm}
 								/>
 							</div>
 							<div className='form-group mt-2'>
@@ -27,6 +55,8 @@ const EditarProducto = () => {
 									className='form-control'
 									name='precio'
 									placeholder='Precio Producto'
+									value={producto.precio}
+									onChange={onChangeForm}
 								/>
 							</div>
 
